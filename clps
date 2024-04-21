@@ -1,0 +1,45 @@
+#!/bin/bash
+
+
+cush=$(which $SHELL | awk -F '/' '{print $NF}')
+
+if [[ $(grep -i "export CLPS_P" "~/.$(echo $cush)rc" > /dev/null 2>&1) ]]; then
+	printf ""
+else
+	echo "export CLPS_PICTURE_DIR=$HOME/Pictures/" >> ~/.$(echo $cush)rc && source ~/.$(echo $cush)rc > /dev/null 2>&1
+fi
+
+
+if [[ $(grep -i "export CLPS_V" "~/.$(echo $cush)rc" > /dev/null 2>&1) ]]; then
+	printf ""
+else
+	echo "export CLPS_VIDEO_DIR=$HOME/Videos/" >> ~/.$(echo $cush)rc && source ~/.$(echo $cush)rc > /dev/null 2>&1
+fi
+
+
+
+clearDir() {
+	rm -rf $1/*
+}
+
+while getopts 'pvc:' flag; do
+	case $flag in
+		p)
+			clearDir $CLPS_PICTURE_DIR
+			;;
+		v)
+			clearDir $CLPS_VIDEO_DIR
+			;;
+		c)
+			clearDir ${OPTARG}
+			;;
+		*)
+			echo "Enter an actual flag lmao 😂"
+			exit 1
+			;;
+	esac
+done
+
+if (( OPTIND == 1 )); then
+	clearDir ~/Pictures
+fi
